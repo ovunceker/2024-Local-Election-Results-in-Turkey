@@ -1,0 +1,53 @@
+---
+title: "2024 Local Election Results in Turkey per Regions"
+author: "Ovunc Ozgun Eker"
+date: "2025-11-12"
+output: html_document
+---
+
+```{r}
+library(leaflet)
+library(dplyr)
+
+# Data frame of regions
+df <- data.frame(
+  lat = c(40.563053,39.344609,38.592534,41.270432,36.585664,37.825786,39.534908),
+  lng = c(28.544954,34.141993,28.808499,36.032168,33.781489,40.716338,42.435563),
+  region = c("Marmara","Ic Anadolu","Ege","Karadeniz","Akdeniz","Guneydogu","Dogu"),
+  party = c("CHP","CHP","CHP","AKP","CHP","DEM","AKP"), 
+  percenteage = c(0.4431, 0.3322,0.4431,0.3704,0.3829,0.3275,0.3266)
+)
+
+# Icons as party logos
+CHP <- makeIcon(
+  iconUrl = "https://upload.wikimedia.org/wikipedia/commons/f/f7/CHP_logo_%282024%2C_vertical_white%29.svg",
+  iconWidth = 31*215/230, iconHeight = 31,
+  iconAnchorX = 31*215/230/2, iconAnchorY = 16
+)
+
+AKP <- makeIcon(
+  iconUrl = "https://upload.wikimedia.org/wikipedia/en/5/56/Justice_and_Development_Party_%28Turkey%29_logo.svg",
+  iconWidth = 31*215/230, iconHeight = 31,
+  iconAnchorX = 31*215/230/2, iconAnchorY = 16
+)
+
+DEM <- makeIcon(
+  iconUrl = "https://upload.wikimedia.org/wikipedia/commons/1/1f/DEM_PARTİ_LOGOSU.png",
+  iconWidth = 31*215/230, iconHeight = 31,
+  iconAnchorX = 31*215/230/2, iconAnchorY = 16
+)
+
+# Combine into a named icon list
+partyIcons <- iconList(CHP = CHP, AKP = AKP, DEM = DEM)
+
+# Use the icons according to the party column
+df %>%
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers(
+    ~lng, ~lat,
+    icon = ~partyIcons[party],
+    popup = ~paste(region, "—", percenteage*100, "%")
+  )
+
+```
